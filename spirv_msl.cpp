@@ -636,7 +636,7 @@ void CompilerMSL::mark_location_as_used_by_shader(uint32_t location, StorageClas
 	MSLVertexAttr *p_va;
 	auto &execution = get_entry_point();
 	if ((execution.model == ExecutionModelVertex) && (storage == StorageClassInput) &&
-	    (p_va = vtx_attrs_by_location[location]))
+	    (p_va = vtx_attrs_by_location[location], p_va))
 		p_va->used_by_shader = true;
 }
 
@@ -2689,7 +2689,9 @@ string CompilerMSL::to_component_argument(uint32_t id)
 	if (ids[id].get_type() != TypeConstant)
 	{
 		SPIRV_CROSS_THROW("ID " + to_string(id) + " is not an OpConstant.");
+#if defined(SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS)
 		return "component::x";
+#endif
 	}
 
 	uint32_t component_index = get<SPIRConstant>(id).scalar();
@@ -2707,7 +2709,9 @@ string CompilerMSL::to_component_argument(uint32_t id)
 	default:
 		SPIRV_CROSS_THROW("The value (" + to_string(component_index) + ") of OpConstant ID " + to_string(id) +
 		                  " is not a valid Component index, which must be one of 0, 1, 2, or 3.");
+#if defined(SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS)
 		return "component::x";
+#endif
 	}
 }
 
